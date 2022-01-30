@@ -150,14 +150,25 @@
 		return TRUE
 
 /mob/living/simple_animal/hostile/swarmer/AttackingTarget()
-	. = ..()
 	if(!isliving(target))
 		if(cannot_integrate[target])
 			to_chat(src, "<span class='warning'>Destroying [target] risks alerting or damaging other lifeforms! Aborting...</span>")
+			return FALSE
+		else if(var/mob/living/L in contents)
+				if(!issilicon(L) && !isbrain(L))
+					to_chat(S, "<span class='warning'>An organism has been detected inside this object. Aborting.</span>")
+					return FALSE
+		else if(isobj(target))
+			if(resistance_flags & INDESTRUCTIBLE)
+				to_chat(src, "<span class='warning'>[target] cannot be deconstructed with our</span>")
+				return FALSE
 		else if(ismachinery(target))
 			DismantleMachine(target)
+			return TRUE
 		else if()
 			Integrate(target)
+			return TRUE
+	else return ..()
 
 /mob/living/simple_animal/hostile/swarmer/CtrlClickOn(atom/A)
 	face_atom(A)
@@ -179,9 +190,6 @@
 
 /obj/effect/mob_spawn/swarmer/IntegrateAmount()
 	return 50
-
-/turf/closed/indestructible/swarmer_act()
-	return FALSE
 
 /obj/swarmer_act(mob/living/simple_animal/hostile/swarmer/S)
 	if(resistance_flags & INDESTRUCTIBLE)
