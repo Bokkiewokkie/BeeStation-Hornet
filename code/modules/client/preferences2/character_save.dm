@@ -36,6 +36,7 @@
 	var/facial_hair_color = "000"
 	var/skin_tone = "caucasian1"
 	var/eye_color = "000"
+	var/origin = "spacer"
 	var/datum/species/pref_species
 	var/list/features = list(
 						"body_size" = "Normal",
@@ -155,6 +156,8 @@
 	SAFE_READ_QUERY(31, loadout_tmp)
 	equipped_gear = json_decode(loadout_tmp)
 
+	SAFE_READ_QUERY(32, origin)
+
 	//Sanitize. Please dont put query reads below this point. Please.
 
 	real_name = reject_bad_name(real_name, pref_species.allow_numbers_in_name)
@@ -202,6 +205,7 @@
 	backbag	= sanitize_inlist(backbag, GLOB.backbaglist, initial(backbag))
 	jumpsuit_style = sanitize_inlist(jumpsuit_style, GLOB.jumpsuitlist, initial(jumpsuit_style))
 	uplink_spawn_loc = sanitize_inlist(uplink_spawn_loc, GLOB.uplink_spawn_loc_list_save, initial(uplink_spawn_loc))
+	origin = sanitize_inlist(origin, GLOB.origins, initial(origin))
 	features["body_size"] = sanitize_inlist(features["body_size"], GLOB.body_sizes, "Normal")
 	features["mcolor"]	= sanitize_hexcolor(features["mcolor"], 3, 0)
 	features["ethcolor"]	= copytext_char(features["ethcolor"], 1, 7)
@@ -325,6 +329,7 @@
 			backbag,
 			jumpsuit_style,
 			uplink_loc,
+			origin,
 			features,
 			custom_names,
 			helmet_style,
@@ -358,6 +363,7 @@
 			:backbag,
 			:jumpsuit_style,
 			:uplink_loc,
+			:origin,
 			:features,
 			:custom_names,
 			:helmet_style,
@@ -393,6 +399,7 @@
 		"backbag" = backbag,
 		"jumpsuit_style" = jumpsuit_style,
 		"uplink_loc" = uplink_spawn_loc,
+		"origin" = origin,
 		"features" = json_encode(features),
 		"custom_names" = json_encode(custom_names),
 		"helmet_style" = helmet_style,
@@ -455,6 +462,8 @@
 
 	character.backbag = backbag
 	character.jumpsuit_style = jumpsuit_style
+
+	character.origin = origin
 
 	var/datum/species/chosen_species
 	chosen_species = pref_species.type

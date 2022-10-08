@@ -60,8 +60,10 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 	// generic traits tied to having the species
 	var/list/inherent_traits = list()
 	var/list/inherent_biotypes = list(MOB_ORGANIC, MOB_HUMANOID)
-	///List of factions the mob gain upon gaining this species.
+	// List of factions the mob gain upon gaining this species.
 	var/list/inherent_factions
+	// List of places this species can originate from.
+	var/list/valid_origins = list("Spacer", "TerraGov Colonist", "Spinward Citizen", "Test Subject")
 
 	var/attack_verb = "punch"	// punch-specific attack verb
 	var/sound/attack_sound = 'sound/weapons/punch1.ogg'

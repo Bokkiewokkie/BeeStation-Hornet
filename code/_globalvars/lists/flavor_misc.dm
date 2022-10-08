@@ -135,6 +135,8 @@ GLOBAL_LIST_INIT(uplink_spawn_loc_list, list(UPLINK_PDA, UPLINK_RADIO, UPLINK_PE
 // What is actually saved; if the uplink implant price changes, it won't affect save files then
 GLOBAL_LIST_INIT(uplink_spawn_loc_list_save, list(UPLINK_PDA, UPLINK_RADIO, UPLINK_PEN, UPLINK_IMPLANT))
 
+GLOBAL_LIST_INIT(origins, list("Spacer", "Solarian", "TerraGov Colonist", "Spinward Citizen", "Test Subject", "Draconian"))
+
 	//Female Uniforms
 GLOBAL_LIST_EMPTY(female_clothing_icons)
 
@@ -142,7 +144,6 @@ GLOBAL_LIST_EMPTY(female_clothing_icons)
 GLOBAL_LIST_INIT(hit_appends, list("-OOF", "-ACK", "-UGH", "-HRNK", "-HURGH", "-GLORF"))
 
 GLOBAL_LIST_INIT(scarySounds, list('sound/weapons/thudswoosh.ogg','sound/weapons/taser.ogg','sound/weapons/armbomb.ogg','sound/voice/hiss1.ogg','sound/voice/hiss2.ogg','sound/voice/hiss3.ogg','sound/voice/hiss4.ogg','sound/voice/hiss5.ogg','sound/voice/hiss6.ogg','sound/effects/glassbr1.ogg','sound/effects/glassbr2.ogg','sound/effects/glassbr3.ogg','sound/items/welder.ogg','sound/items/welder2.ogg','sound/machines/airlock.ogg','sound/effects/clownstep1.ogg','sound/effects/clownstep2.ogg'))
-
 
 // Reference list for disposal sort junctions. Set the sortType variable on disposal sort junctions to
 // the index of the sort department that you want. For example, sortType set to 2 will reroute all packages
