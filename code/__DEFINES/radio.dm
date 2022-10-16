@@ -2,8 +2,8 @@
 
 //say based modes like binary are in living/say.dm
 
-#define RADIO_CHANNEL_COMMON "Common"
-#define RADIO_KEY_COMMON ";"
+#define RADIO_CHANNEL_EMERGENCY "Local" //keep this accessible only by radio and intercom
+#define RADIO_KEY_DEPARTMENT ";" //Talk over your headset's department channel
 
 #define RADIO_CHANNEL_SECURITY "Security"
 #define RADIO_KEY_SECURITY "s"

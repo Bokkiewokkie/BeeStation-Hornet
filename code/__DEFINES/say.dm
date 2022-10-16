@@ -10,7 +10,7 @@
 //Message modes. Each one defines a radio channel, more or less.
 
 //if you use ! as a mode key for some ungodly reason, change the first character for ion_num() so get_message_mode() doesn't freak out with state law prompts - shiz.
-#define MODE_HEADSET "headset"
+#define MODE_DEPARTMENT "department"
 #define MODE_ROBOT "robot"
 
 #define MODE_R_HAND "right hand"
@@ -30,10 +30,6 @@
  #define WHISPER_MODE "the type of whisper"
 #define MODE_WHISPER "whisper"
 #define MODE_WHISPER_CRIT "whispercrit"
-
-#define MODE_DEPARTMENT "department"
-#define MODE_KEY_DEPARTMENT "h"
-#define MODE_TOKEN_DEPARTMENT ":h"
 
 #define MODE_ALIEN "alientalk"
 #define MODE_HOLOPAD "holopad"

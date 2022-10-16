@@ -34,7 +34,7 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 	"ш" = MODE_INTERCOM,
 
 	// Department
-	"р" = MODE_DEPARTMENT,
+	"ж" = MODE_DEPARTMENT,
 	"с" = RADIO_CHANNEL_COMMAND,
 	"т" = RADIO_CHANNEL_SCIENCE,
 	"ь" = RADIO_CHANNEL_MEDICAL,
