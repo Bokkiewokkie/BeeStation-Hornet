@@ -134,8 +134,8 @@ GLOBAL_LIST_INIT(jumpsuitlist, list(PREF_SUIT, PREF_SKIRT))
 GLOBAL_LIST_INIT(uplink_spawn_loc_list, list(UPLINK_PDA, UPLINK_RADIO, UPLINK_PEN, UPLINK_IMPLANT_WITH_PRICE))
 // What is actually saved; if the uplink implant price changes, it won't affect save files then
 GLOBAL_LIST_INIT(uplink_spawn_loc_list_save, list(UPLINK_PDA, UPLINK_RADIO, UPLINK_PEN, UPLINK_IMPLANT))
-
-GLOBAL_LIST_INIT(origins, list("Spacer", "Solarian", "TerraGov Colonist", "Spinward Citizen", "Test Subject", "Draconian"))
+// Every available origin, some species will have different options from these set as their valid_origins
+GLOBAL_LIST_INIT(origins, list("Spacer", "Solarian", "TerraGov Colonist", "Spinward Citizen", "Test Subject", "Draconian", "Sproutling", "Salturian", "Nomad"))
 
 	//Female Uniforms
 GLOBAL_LIST_EMPTY(female_clothing_icons)

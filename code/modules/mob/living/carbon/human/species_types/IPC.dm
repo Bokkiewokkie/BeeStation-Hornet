@@ -20,8 +20,6 @@
 	skinned_type = /obj/item/stack/sheet/iron{amount = 10}
 	exotic_blood = /datum/reagent/oil
 	damage_overlay_type = "synth"
-	mutant_bodyparts = list("ipc_screen", "ipc_antenna", "ipc_chassis")
-	default_features = list("ipc_screen" = "BSOD", "ipc_antenna" = "None")
 	burnmod = 2
 	heatmod = 1.5
 	brutemod = 1
@@ -37,6 +35,7 @@
 	changesource_flags = MIRROR_BADMIN | WABBAJACK
 	species_language_holder = /datum/language_holder/synthetic
 	special_step_sounds = list('sound/effects/servostep.ogg')
+	valid_origins = list("Spacer", "TerraGov Colonist", "Solarian", "Spinward Citizen", "Test Subject")
 
 	species_chest = /obj/item/bodypart/chest/ipc
 	species_head = /obj/item/bodypart/head/ipc
@@ -49,7 +48,6 @@
 	var/datum/action/innate/change_screen/change_screen
 
 	speak_no_tongue = FALSE  // who stole my soundblaster?! (-candy/etherware)
-	valid_origins = list("Spacer", "TerraGov Colonist", "Solarian", "Spinward Citizen", "Test Subject")
 
 /datum/species/ipc/random_name(gender, unique, lastname, attempts)
 	. = "[pick(GLOB.posibrain_names)]-[rand(100, 999)]"

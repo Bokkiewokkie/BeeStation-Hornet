@@ -23,6 +23,7 @@
 	deathsound = 'sound/voice/lizard/deathsound.ogg'
 	species_language_holder = /datum/language_holder/lizard
 	digitigrade_customization = DIGITIGRADE_OPTIONAL
+	valid_origins = list("Spacer", "TerraGov Colonist", "Spinward Citizen", "Draconian", "Test Subject")
 
 	species_chest = /obj/item/bodypart/chest/lizard
 	species_head = /obj/item/bodypart/head/lizard

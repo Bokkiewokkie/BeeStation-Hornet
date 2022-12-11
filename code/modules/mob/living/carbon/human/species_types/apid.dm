@@ -21,6 +21,7 @@
 	changesource_flags = MIRROR_BADMIN | WABBAJACK | MIRROR_MAGIC | MIRROR_PRIDE | ERT_SPAWN | RACE_SWAP | SLIME_EXTRACT
 	species_language_holder = /datum/language_holder/apid
 	inert_mutation = WAXSALIVA
+	valid_origins = list("Spacer", "TerraGov Colonist", "Spinward Citizen", "Test Subject", "Salturian")
 	var/cold_cycle = 0
 
 	species_chest = /obj/item/bodypart/chest/apid

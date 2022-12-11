@@ -21,6 +21,7 @@
 	hair_color = "fixedmutcolor"
 	hair_alpha = 140
 	swimming_component = /datum/component/swimming/ethereal
+	valid_origins = list("Spacer", "TerraGov Colonist", "Spinward Citizen", "Sproutling", "Test Subject")
 
 	species_chest = /obj/item/bodypart/chest/ethereal
 	species_head = /obj/item/bodypart/head/ethereal
