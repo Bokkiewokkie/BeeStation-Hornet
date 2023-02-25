@@ -16,6 +16,8 @@ SUBSYSTEM_DEF(economy)
 	///The modifier multiplied to the value of bounties paid out.
 	///Multiplied as they go to all department accounts rather than just cargo.
 	var/bounty_modifier = 3
+	/// Modifier used to randomize the starting budget and salary for round variety.
+	var/budget_modifier = 1
 
 	/// Number of mail items generated.
 	var/mail_waiting
@@ -28,6 +30,8 @@ SUBSYSTEM_DEF(economy)
 	for(var/datum/bank_account/department/each as() in subtypesof(/datum/bank_account/department))
 		if(!initial(each.nonstation_account))
 			budget_size++
+	budget_modifier = rand(75,125)/100
+	budget_pool = floor(budget_pool * budget_modifier)
 	var/budget_to_hand_out = round(budget_pool / budget_size)
 
 	//Creating department accounts subtypes

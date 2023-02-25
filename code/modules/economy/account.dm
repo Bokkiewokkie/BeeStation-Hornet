@@ -79,7 +79,7 @@
 		if(payment_per_department[D] <= 0 && bonus_per_department[D] <= 0)
 			continue
 
-		var/money_to_transfer = payment_per_department[D] * amt_of_paychecks
+		var/money_to_transfer = floor(payment_per_department[D] * amt_of_paychecks * SSeconomy.budget_modifier)
 		if((money_to_transfer + bonus_per_department[D]) < 0) //Check if the bonus is docking more pay than possible
 			bonus_per_department[D] -= money_to_transfer //Remove the debt with the payday
 			money_to_transfer = 0 //No money for you
