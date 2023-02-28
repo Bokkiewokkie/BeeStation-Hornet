@@ -31,7 +31,7 @@ SUBSYSTEM_DEF(economy)
 		if(!initial(each.nonstation_account))
 			budget_size++
 	budget_modifier = rand(75,125)/100
-	budget_pool = floor(budget_pool * budget_modifier)
+	budget_pool = round(budget_pool * budget_modifier)
 	var/budget_to_hand_out = round(budget_pool / budget_size)
 
 	//Creating department accounts subtypes

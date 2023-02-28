@@ -12,38 +12,27 @@
 
 	var/authenthicated = FALSE
 	var/target_dept
+	var/datum/data/record/target
 
 /datum/computer_file/program/salary_manager/ui_static_data(mob/user)
 	var/list/data = list()
-	data["manifest"] = GLOB.data_core.get_manifest()
+	data["manifest"] = GLOB.data_core.get_manifest(target_dept)
 	return data
 
 /datum/computer_file/program/salary_manager/ui_data(mob/user)
 	var/list/data = get_header_data()
+	var/obj/item/computer_hardware/card_slot/card_slot2
+	data[""]
 
-	var/obj/item/computer_hardware/printer/printer
-	if(computer)
-		printer = computer.all_components[MC_PRINT]
-
-	if(computer)
-		data["have_printer"] = !!printer
-	else
-		data["have_printer"] = FALSE
 	return data
 
 /datum/computer_file/program/salary_manager/proc/authenticate(mob/user, obj/item/card/id/id_card)
 	if(!id_card)
 		return
 
-	if(istype(id_card, /obj/item/card/id/departmental_budget) && !HAS_TRAIT(SSstation, STATION_TRAIT_UNITED_BUDGET))
+	if(istype(id_card, /obj/item/card/id/departmental_budget))
 		var/obj/item/card/id/departmental_budget/ID = id_card
-		switch(id_card.department_ID)
-
-
-	region_access = list()
-	if(!target_dept && (ACCESS_CHANGE_IDS in id_card.access))
-		minor = FALSE
-		authenticated = TRUE
+		target_dept = id_card.registered_account.department_bitflag //It's a surprise tool that will help us later
 		update_static_data(user)
 		return TRUE
 
@@ -78,4 +67,5 @@
 
 	switch(action)
 		if("Salary_change")
+
 

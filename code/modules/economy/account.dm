@@ -13,6 +13,8 @@
 	var/withdrawDelay = 0
 	/// used for cryo'ed people's account. Once it's TRUE, most bank features of the bank account will be disabled.
 	var/suspended = FALSE
+	/// Override for manually set paychecks
+	var/paycheck_override = null
 
 	/// active department will sell things for free
 	var/active_departments = NONE
@@ -79,7 +81,9 @@
 		if(payment_per_department[D] <= 0 && bonus_per_department[D] <= 0)
 			continue
 
-		var/money_to_transfer = floor(payment_per_department[D] * amt_of_paychecks * SSeconomy.budget_modifier)
+		var/money_to_transfer = round(payment_per_department[D] * amt_of_paychecks * SSeconomy.budget_modifier)
+		if(paycheck_override)
+			money_to_transfer = paycheck_override * amt_of_paychecks //Pay is set manually, so no modifiers
 		if((money_to_transfer + bonus_per_department[D]) < 0) //Check if the bonus is docking more pay than possible
 			bonus_per_department[D] -= money_to_transfer //Remove the debt with the payday
 			money_to_transfer = 0 //No money for you

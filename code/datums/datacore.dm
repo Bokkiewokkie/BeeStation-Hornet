@@ -75,6 +75,15 @@
 					return
 
 /**
+ * Adjusting paychecks through the record
+ */
+/datum/datacore/proc/adjust_paycheck(id, amount)
+	for(var/datum/data/record/R in general)
+		if(R.fields["id"] == id)
+			id.registered_account.paycheck_override = round(amount)
+			return
+
+/**
   * Adds crime to security record.
   *
   * Is used to add single crime to someone's security record.
@@ -139,7 +148,7 @@
 		foundrecord.fields["rank"] = assignment
 		foundrecord.fields["hud"] = hudstate
 
-/datum/datacore/proc/get_manifest()
+/datum/datacore/proc/get_manifest(department)
 	var/list/manifest_out = list()
 	var/list/dept_list = list(
 		"Command" = DEPT_BITFLAG_COM,
@@ -154,6 +163,8 @@
 		"Silicon" = DEPT_BITFLAG_SILICON
 	)
 	for(var/datum/data/record/t in GLOB.data_core.general)
+		if(department && (t.fields["active_dept"] != department))
+			continue
 		var/name = t.fields["name"]
 		var/rank = t.fields["rank"]
 		var/dept_bitflags = t.fields["active_dept"]
