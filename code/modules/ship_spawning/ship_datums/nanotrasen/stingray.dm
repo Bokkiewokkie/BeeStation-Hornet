@@ -1,4 +1,5 @@
 /datum/starter_ship_template/stringray
+	faction_flags = FACTION_NANOTRASEN
 	template_cost = 800
 	job_roles = list(
 		/datum/job/captain = 1,
@@ -13,7 +14,7 @@
 		and engineering bay which offer some basic functionality."
 
 /datum/map_template/shuttle/ship/stringray
-	name = "Stingray"
+	name = "NTC Stingray"
 	suffix = "stingray"
 
 /area/shuttle/stingray

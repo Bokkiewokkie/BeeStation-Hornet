@@ -175,10 +175,11 @@
 			continue
 		var/list/other_ship = list(
 			id = ship_id,
-			name = ship.shuttle_name,
+			name = shuttle_object.get_name(),
 			health = ship.integrity_remaining,
 			maxHealth = ship.max_ship_integrity * ship.critical_proportion,
 			critical = ship.reactor_critical,
+			aggro_state = our_ship.faction.check_faction_alignment(ship.faction),
 		)
 		data["ships"] += list(other_ship)
 	return data
@@ -316,6 +317,10 @@
 		return
 	if(!(T in M.return_turfs()))
 		return
+	// Log that we just attempted an attack
+	var/datum/shuttle_data/data = SSorbits.get_shuttle_data(M.id)
+	var/datum/shuttle_data/our_data = SSorbits.get_shuttle_data(shuttle_id)
+	data.faction.on_attacked_by(our_data.faction)
 	weapon.target_turf = T
 	//Fire
 	INVOKE_ASYNC(weapon, TYPE_PROC_REF(/obj/machinery/shuttle_weapon, fire), shuttle_id)

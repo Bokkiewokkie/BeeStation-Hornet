@@ -28,6 +28,8 @@
 	var/datum/starter_ship_template/selected_ship
 	// What job role each ckey wants
 	var/list/wanted_roles = list()
+	// The faction that we desire to join
+	var/desired_faction = NONE
 
 	var/list/job_list
 	var/list/assoc_spawn_points
@@ -53,6 +55,9 @@
 /datum/ship_lobby/Destroy(force, ...)
 	SSship_spawning.game_lobbies -= src
 	STOP_PROCESSING(SSship_spawning, src)
+	for (var/client/C in members)
+		if (C.lobby == src)
+			C.lobby = null
 	. = ..()
 
 /datum/ship_lobby/process(delta_time)
@@ -79,10 +84,13 @@
 /datum/ship_lobby/proc/member_join(client/C)
 	if (C)
 		members += C
+		C.lobby = src
 		to_chat(members, "<span class='announce'>[C.ckey] has joined the lobby.</span>")
 
 /datum/ship_lobby/proc/member_leave(client/C)
 	members -= C
+	if (C.lobby == src)
+		C.lobby = null
 	if (C == owner)
 		// Transfer host ownership
 		if (length(members) > 0)
@@ -108,10 +116,26 @@
 		return "ERROR"
 	return shuttle.shuttle_name
 
+/datum/ship_lobby/proc/set_faction(client/C, desired_faction)
+	if (!is_host(C) || loading || lobby_state != LOBBY_MENU)
+		return
+	if (!selected_ship)
+		return
+	if (!(desired_faction & selected_ship.faction_flags))
+		return
+	if (bit_count(desired_faction) != 1)
+		return
+	// Verify
+	src.desired_faction = desired_faction
+
+/datum/ship_lobby/proc/get_faction()
+	return desired_faction
+
 /datum/ship_lobby/proc/set_ship(client/C, datum/starter_ship_template/starter_ship)
 	if (!is_host(C) || loading || lobby_state != LOBBY_MENU)
 		return
 	selected_ship = starter_ship
+	desired_faction = NONE
 
 /datum/ship_lobby/proc/get_ship()
 	return selected_ship
@@ -194,6 +218,8 @@
 	// Keep track of the job list
 	job_list = selected_ship.job_roles.Copy()
 	var/list/unspawned_clients = list()
+	var/mob/most_important_player
+	var/highest_importance = 0
 	// Start player spawning procedures
 	for (var/client/player in members)
 		var/datum/job/desired_job = wanted_roles[player.ckey]
@@ -210,7 +236,7 @@
 		job_list[desired_job] = slots_left
 		// Spawn the player at a valid spawn point
 		var/turf/selected_spawn_point
-		if (!assoc_spawn_points[initial(desired_job.title)])
+		if (!assoc_spawn_points[initial(desired_job.spawn_title)])
 			// Spawn at a random point
 			if (length(assoc_spawn_points))
 				selected_spawn_point = get_turf(pick(pick(assoc_spawn_points)))
@@ -218,7 +244,7 @@
 				// Yolospawn
 				selected_spawn_point = pick(turfs)
 		else
-			selected_spawn_point = get_turf(pick(assoc_spawn_points[initial(desired_job.title)]))
+			selected_spawn_point = get_turf(pick(assoc_spawn_points[initial(desired_job.spawn_title)]))
 		// Perform roundstart prefs loading
 		var/mob/living/carbon/human/created_character = new(selected_spawn_point)
 		player.prefs.active_character.copy_to(created_character)
@@ -227,13 +253,29 @@
 		var/datum/job/job_instance = SSjob.GetJob(initial(desired_job.title))
 		job_instance.equip(created_character)
 		created_character.key = player.key
+		if (job_instance.importance > highest_importance)
+			highest_importance = job_instance.importance
+			most_important_player = created_character
 	// Set the name of the ship
+	if (ship_name == initial(ship_name))
+		// Set a name, nerd
+		ship_name = selected_ship.spawned_template.name
 	// Check ship name
+	var/number = 0
 	for (var/obj/docking_port/mobile/other_ship in SSshuttle.mobile)
-		if (other_ship.name == ship_name)
-			// Highly Mathemtical
-			ship_name = "[ship_name]'"
+		if (other_ship.name == ship_name || other_ship.name == "[ship_name] [number]")
+			number++
+	// Highly Mathemtical
+	if (number)
+		ship_name = "[ship_name] [number]"
 	M.name = ship_name
+	var/datum/shuttle_data/data = SSorbits.get_shuttle_data(M.id)
+	data.shuttle_name = ship_name
+	// Check ship faction
+	if (!desired_faction)
+		desired_faction = (FACTION_INDEPENDANT & selected_ship.faction_flags) ? FACTION_INDEPENDANT : (FACTION_NANOTRASEN & selected_ship.faction_flags) ? FACTION_NANOTRASEN : FACTION_SYNDICATE
+	// Set the ships factoin
+	data.faction = get_new_faction_from_flag(desired_faction)
 	// Spawn and players that weren't spawned with randomised jobs
 	// If there are literally no job slots left, spawn as an assistant
 	for (var/client/player in unspawned_clients)
@@ -261,19 +303,25 @@
 				// Yolospawn
 				selected_spawn_point = pick(turfs)
 		else
-			selected_spawn_point = get_turf(pick(assoc_spawn_points[initial(desired_job.title)]))
+			selected_spawn_point = get_turf(pick(assoc_spawn_points[initial(desired_job.spawn_title)]))
 		// Perform roundstart prefs loading
 		var/mob/living/carbon/human/created_character = new(selected_spawn_point)
 		player.prefs.active_character.copy_to(created_character)
 		created_character.dna.update_dna_identity()
 		// Spawn the job role
-		var/datum/job/job_instance = SSjob.GetJob(initial(desired_job.title))
+		var/datum/job/job_instance = SSjob.GetJob(initial(desired_job.spawn_title))
 		job_instance.equip(created_character)
 		created_character.key = player.key
+		if (job_instance.importance > highest_importance)
+			highest_importance = job_instance.importance
+			most_important_player = created_character
+	// Give the budget card
+	var/obj/item/card/id/departmental_budget/shuttle/shuttle_budget = new (most_important_player.loc, M)
+	most_important_player.put_in_hands(shuttle_budget)
 	// Launch the ship into supercruise
 	// TODO: Start docked at a station?
 	//M.enter_supercruise(new /datum/orbital_vector(rand(-10000, 10000), rand(-10000, 10000)))
-	var/obj/docking_port/stationary/docking_port = SSship_spawning.get_spawn_point(NONE, M)
+	var/obj/docking_port/stationary/docking_port = SSship_spawning.get_spawn_point(desired_faction, M)
 	if (docking_port)
 		M.initiate_docking(docking_port)
 	else

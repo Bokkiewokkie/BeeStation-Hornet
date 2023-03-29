@@ -38,7 +38,7 @@
 	var/reactor_critical = FALSE
 	///How much damage can the ship sustain before exploding?
 	var/critical_proportion = SHIP_INTEGRITY_FACTOR_PLAYER
-	///The faction of this shuttle
+	///The faction instance of this shuttle
 	var/datum/faction/faction
 	///Fired upon these factions despite being allied with them. Any ships in that faction will fire upon this ship.
 	///FACTIONS THAT WE ARE ROGUE TO, NOT FACTIONS THAT ARE ROGUE TO US. ADDING TO LIST LIST DECLARES THIS SHIP AS HOSTILE TO THAT FACTION
@@ -66,6 +66,8 @@
 	var/obj/docking_port/mobile/attached_port = SSshuttle.getShuttle(port_id)
 	shuttle_name = attached_port.name
 	calculate_initial_stats()
+	if (!faction)
+		faction = new /datum/faction/independant
 
 /datum/shuttle_data/Destroy(force, ...)
 	unregister_turfs()
@@ -112,13 +114,13 @@
 		//Check the type
 		if (iswallturf(T))
 			if(istype(T, /turf/closed/wall/r_wall))
-				. += 7
+				. += 15
 			else
-				. += 5
+				. += 10
 			continue
 		//2 points if the floor isn't raw plating
 		if (!isplatingturf(T))
-			. += 2
+			. += 5
 
 /// Perform a full recalculation of ship integrity
 /datum/shuttle_data/proc/recalculate_integrity()
@@ -145,14 +147,14 @@
 		//Check the type
 		if (iswallturf(T))
 			if(istype(T, /turf/closed/wall/r_wall))
-				max_ship_integrity += 7
+				max_ship_integrity += 15
 			else
-				max_ship_integrity += 5
+				max_ship_integrity += 10
 			continue
 		//If floor turf
 		//2 points if the floor isn't raw plating
 		if (!isplatingturf(T))
-			max_ship_integrity += 2
+			max_ship_integrity += 5
 	//Finished calculating
 	log_shuttle("Recalculated shuttle health for [shuttle_name] ([port_id]). Shuttle now has an integrity rating of [max_ship_integrity]")
 	//Integrity remaining will always be max health, as this is our reference point
@@ -232,13 +234,13 @@
 		//Subtract the old integrity
 		if (iswallturf(source))
 			if(istype(source, /turf/closed/wall/r_wall))
-				current_ship_integrity -= 7
+				current_ship_integrity -= 15
 			else
-				current_ship_integrity -= 5
+				current_ship_integrity -= 10
 		else if(isfloorturf(source))
 			//2 points if the floor isn't raw plating
 			if (!isplatingturf(source))
-				current_ship_integrity -= 2
+				current_ship_integrity -= 5
 	//Only update if there are still shuttle baseturfs here
 	if ((new_baseturfs && islist(new_baseturfs) && new_baseturfs.Find(/turf/baseturf_skipover/shuttle))\
 		|| (!new_baseturfs && islist(source.baseturfs) && source.baseturfs.Find(/turf/baseturf_skipover/shuttle)))
@@ -247,13 +249,13 @@
 		//Add the new integrity
 		if (ispath(path, /turf/closed/wall))
 			if(ispath(path, /turf/closed/wall/r_wall))
-				current_ship_integrity += 7
+				current_ship_integrity += 15
 			else
-				current_ship_integrity += 5
+				current_ship_integrity += 10
 		else if(ispath(path, /turf/open/floor))
 			//2 points if the floor isn't raw plating
 			if (!ispath(path, /turf/open/floor/plating))
-				current_ship_integrity += 2
+				current_ship_integrity += 5
 	//Update the integrity
 	update_integrity()
 #ifdef DEBUG_SYNC_CHECK

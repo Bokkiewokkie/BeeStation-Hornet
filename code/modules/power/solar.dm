@@ -278,9 +278,17 @@
 
 /obj/machinery/power/solar_control/Initialize(mapload)
 	. = ..()
+	connect_to_network()
+	return INITIALIZE_HINT_LATELOAD
+
+/obj/machinery/power/solar_control/LateInitialize()
+	. = ..()
+	// Initially connect all panels
+	search_for_connected()
+	if(connected_tracker && track == 2)
+		connected_tracker.set_angle(SSsun.angle)
 	if(powernet)
 		set_panels(currentdir)
-	connect_to_network()
 
 /obj/machinery/power/solar_control/Destroy()
 	for(var/obj/machinery/power/solar/M in connected_panels)

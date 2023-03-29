@@ -11,9 +11,9 @@ PROCESSING_SUBSYSTEM_DEF(orbits)
 	var/datum/orbital_map_tgui/orbital_map_tgui = new()
 
 	// Space ruins will be non-persistent
-	var/initial_space_ruins = 6
+	var/initial_space_ruins = 8
 	// Scarce resources
-	var/initial_asteroids = 2
+	var/initial_asteroids = 3
 
 	var/orbits_setup = FALSE
 
@@ -57,11 +57,20 @@ PROCESSING_SUBSYSTEM_DEF(orbits)
 	//shuttle weapons
 	var/list/shuttle_weapons = list()
 
+	// Singleton Faction Instances
+	var/list/lead_faction_instances = list()
+
+	// Dock allocations
+	var/list/dock_allocations = list()
+
 /datum/controller/subsystem/processing/orbits/Initialize(start_timeofday)
 	. = ..()
 	setup_event_list()
 	//Create the main orbital map.
 	orbital_maps[PRIMARY_ORBITAL_MAP] = new /datum/orbital_map()
+	// Create the lead faction instances
+	for (var/subtype in subtypesof(/datum/faction))
+		lead_faction_instances[subtype] = new subtype(TRUE)
 
 /datum/controller/subsystem/processing/orbits/Recover()
 	orbital_maps |= SSorbits.orbital_maps
@@ -108,7 +117,10 @@ PROCESSING_SUBSYSTEM_DEF(orbits)
 		new /datum/orbital_object/z_linked/beacon/spaceruin()
 	//Create asteroid belt
 	for(var/i in 1 to initial_asteroids)
-		new /datum/orbital_object/z_linked/beacon/asteroid()
+		if (prob(15))
+			new /datum/orbital_object/z_linked/beacon/asteroid/crilium()
+		else
+			new /datum/orbital_object/z_linked/beacon/asteroid()
 
 /datum/controller/subsystem/processing/orbits/fire(resumed)
 	if(resumed)
@@ -194,7 +206,7 @@ PROCESSING_SUBSYSTEM_DEF(orbits)
 		//Transmit map data about non single-instanced objects.
 		data["map_objects"] += list(list(
 			"id" = object.unique_id,
-			"name" = object.name,
+			"name" = object.get_name(),
 			"position_x" = object.position.GetX(),
 			"position_y" = object.position.GetY(),
 			"velocity_x" = object.velocity.GetX(),
@@ -231,6 +243,13 @@ PROCESSING_SUBSYSTEM_DEF(orbits)
 	qdel(shuttle)
 
 //====================================
+// Factions
+//====================================
+
+/datum/controller/subsystem/processing/orbits/proc/get_lead_faction(faction_type)
+	return lead_faction_instances[faction_type]
+
+//====================================
 // Other
 //====================================
 
@@ -241,3 +260,6 @@ PROCESSING_SUBSYSTEM_DEF(orbits)
 	if (istype(location) && location.mobile_port)
 		return SSorbits.assoc_shuttles[location.mobile_port.id]
 	return null
+
+/datum/controller/subsystem/processing/orbits/proc/get_allocation(mobile_id)
+	return dock_allocations[mobile_id]

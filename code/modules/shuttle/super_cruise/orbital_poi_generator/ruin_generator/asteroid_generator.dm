@@ -2,13 +2,13 @@
 //weight_offset - Affects the probability of a rock spawning (between -1 and 1)
 //if this number is negative, asteroids will be smaller.
 //if this number is positive asteroids will be larger and more likely
-/proc/generate_asteroids(center_x, center_y, center_z, max_radius, weight_offset = 0, scale = 65)
+/proc/generate_asteroids(center_x, center_y, center_z, max_radius, weight_offset = 0, scale = 65, rock_type = /turf/closed/mineral/random)
 	var/datum/space_level/space_level = SSmapping.get_level(center_z)
 	space_level.start_generating()
-	_generate_asteroids(center_x, center_y, center_z, max_radius, weight_offset, scale)
+	_generate_asteroids(center_x, center_y, center_z, max_radius, weight_offset, scale, rock_type)
 	space_level.stop_generating()
 
-/proc/_generate_asteroids(center_x, center_y, center_z, max_radius, weight_offset = 0, scale = 65)
+/proc/_generate_asteroids(center_x, center_y, center_z, max_radius, weight_offset = 0, scale = 65, rock_type)
 
 	SSair.pause_z(center_z)
 
@@ -33,11 +33,11 @@
 		//Check if we are closed or not (Cave generation)
 		var/closed = text2num(generated_string[world.maxx * (T.y - 1) + T.x])
 		var/noise_at_coord = text2num(rustg_noise_get_at_coordinates("[seed]", "[T.x / perlin_noise_scale]", "[T.y / perlin_noise_scale]"))
-		var/plant_value = (distance / max_radius) + weight_offset + 0.3
-		var/rock_value = (distance / max_radius) + weight_offset + 0.1
-		var/sand_value = (distance / max_radius) + weight_offset
+		var/plant_value = (distance / max_radius) - weight_offset + 0.3
+		var/rock_value = (distance / max_radius) - weight_offset + 0.1
+		var/sand_value = (distance / max_radius) - weight_offset
 		if(noise_at_coord >= rock_value && closed)
-			T.ChangeTurf(/turf/closed/mineral/random, list(/turf/open/floor/plating/asteroid/airless), CHANGETURF_IGNORE_AIR)
+			T.ChangeTurf(rock_type, list(/turf/open/floor/plating/asteroid/airless), CHANGETURF_IGNORE_AIR)
 		else if(noise_at_coord >= sand_value)
 			var/turf/newT = T.ChangeTurf(/turf/open/floor/plating/asteroid/airless, flags = CHANGETURF_IGNORE_AIR)
 			if(noise_at_coord >= plant_value)
@@ -48,7 +48,7 @@
 						/obj/structure/flora/ausbushes/fullgrass, /obj/structure/flora/ausbushes/ppflowers,
 						/obj/structure/flora/ausbushes/sparsegrass, /obj/structure/flora/ausbushes/ywflowers,
 						/obj/structure/flora/bush, /obj/structure/flora/junglebush, /obj/structure/flora/junglebush/b,
-						/obj/structure/flora/junglebush/c, /obj/structure/glowshroom/glowcap, /obj/structure/flora/ash/cap_shroom,
+						/obj/structure/flora/junglebush/c,
 						/obj/structure/flora/ash/stem_shroom, /obj/structure/flora/ash/cacti)
 					new plant_type(T)
 		CHECK_TICK

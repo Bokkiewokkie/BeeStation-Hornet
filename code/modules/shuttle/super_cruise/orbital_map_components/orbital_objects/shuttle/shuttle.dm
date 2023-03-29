@@ -170,7 +170,7 @@
 		else
 			var/datum/orbital_object/z_linked/beacon/stranded_shuttle/shuttle_location = new(new /datum/orbital_vector(position.GetX(), position.GetY()))
 			shuttle_location.name = "Stranded [name]"
-			commence_docking(shuttle_location, TRUE, FALSE, TRUE)
+			commence_docking(shuttle_location, TRUE, TRUE, TRUE)
 	//No more custom docking
 	docking_frozen = TRUE
 	if(!random_drop(docking_target.linked_z_level[1].z_value))
@@ -301,9 +301,12 @@
 	return TRUE
 
 /datum/orbital_object/shuttle/get_locator_name()
-	return "Shuttle (#[unique_id])"
+	return "([shuttle_data.faction.faction_tag]) Shuttle #[unique_id]"
 
 /datum/orbital_object/shuttle/is_stealth()
 	if (!shuttle_data)
 		return FALSE
 	return shuttle_data.stealth
+
+/datum/orbital_object/shuttle/get_name()
+	return "([shuttle_data.faction.faction_tag]) [shuttle_data.shuttle_name]"

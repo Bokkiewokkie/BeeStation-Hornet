@@ -155,6 +155,45 @@
 	return FALSE
 
 // ========================
+// Laser Charger
+// ========================
+
+/obj/machinery/ammo_loader/laser
+	name = "laser charging unit"
+	desc = "A unit for charging laser weapons."
+	slots = 1
+	icon = 'icons/obj/shuttle_weapons.dmi'
+	icon_state = "loader_charge"
+	circuit = /obj/item/circuitboard/machine/loader_laser
+	// APC cells start with 2500 power, so this will drain it fast
+	var/power_per_shot = 60
+
+/obj/machinery/ammo_loader/laser/Initialize(mapload)
+	. = ..()
+	power_per_shot /= GLOB.CELLRATE
+
+/obj/machinery/ammo_loader/laser/is_accepted(obj/item/ammo_casing/rail)
+	return FALSE
+
+/obj/machinery/ammo_loader/laser/take_bullet(desired_caliber)
+	if (!powered())
+		return null
+	use_power(power_per_shot)
+	return new /obj/item/ammo_casing/caseless/laser/shuttle(loc)
+
+/obj/machinery/ammo_loader/laser/has_ammo(desired_caliber)
+	return is_operational && powered()
+
+/obj/item/circuitboard/machine/loader_laser
+	name = "laser charging unit (Machine Board)"
+	icon_state = "security"
+	build_path = /obj/machinery/ammo_loader/laser
+	req_components = list(
+		/obj/item/stock_parts/manipulator = 2,
+		/obj/item/stock_parts/capacitor = 3,
+		)
+
+// ========================
 // Railgun Shell Loader
 // ========================
 
@@ -162,6 +201,9 @@
 	name = "railgun auto-loader"
 	desc = "An ammunition rack for loading rails into railguns. Can be connected to a single mounted weapon using a multitool."
 	slots = 5
+	icon = 'icons/obj/shuttle_weapons.dmi'
+	icon_state = "loader_box"
+	circuit = /obj/item/circuitboard/machine/loader_railgun
 
 /obj/machinery/ammo_loader/railgun/is_accepted(obj/item/ammo_casing/rail)
 	if (!istype(rail))
@@ -186,6 +228,7 @@
 	slots = 2
 	icon = 'icons/obj/shuttle_weapons.dmi'
 	icon_state = "loader_box"
+	circuit = /obj/item/circuitboard/machine/loader_ballistic
 
 /obj/machinery/ammo_loader/ballistic/is_accepted(obj/item/ammo_box/box)
 	if (!istype(box))
@@ -211,6 +254,7 @@
 	slots = 5
 	icon = 'icons/obj/shuttle_weapons_large.dmi'
 	icon_state = "loader_missile"
+	circuit = /obj/item/circuitboard/machine/loader_missile
 
 /obj/machinery/ammo_loader/missile/is_accepted(obj/item/ammo_casing/missile)
 	if (!istype(missile))
